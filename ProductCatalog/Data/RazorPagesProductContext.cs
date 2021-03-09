@@ -12,8 +12,10 @@ namespace RazorPagesProduct.Data
         public RazorPagesProductContext (DbContextOptions<RazorPagesProductContext> options)
             : base(options)
         {
+            Database.EnsureCreated();
         }
 
-        public DbSet<ProductCatalog.Models.Product> Product { get; set; }
+        public DbSet<Product> Product { get; set; }
+        public DbSet<Category> Category { get; set; }
     }
 }

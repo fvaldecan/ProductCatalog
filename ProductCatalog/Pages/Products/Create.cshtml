@@ -16,16 +16,25 @@
                 <input asp-for="Product.Name" class="form-control" />
                 <span asp-validation-for="Product.Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Product.Category" class="control-label"></label>
-                <input asp-for="Product.Category" class="form-control" />
-                <span asp-validation-for="Product.Category" class="text-danger"></span>
-            </div>
+
+            @*<div class="form-group">
+            <label asp-for="Product.CategoryId" class="control-label"></label>
+            <input asp-for="Product.CategoryId" class="form-control" />
+            <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
+        </div>*@
             <div class="form-group">
                 <label asp-for="Product.Price" class="control-label"></label>
                 <input asp-for="Product.Price" class="form-control" />
                 <span asp-validation-for="Product.Price" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label class="control-label">Category</label>
+                <select asp-for="ProductCategory" asp-items="Model.Categories">
+                    <option disabled selected> -- select an option -- </option>
+                    <option asp-validation-for="ProductCategory" value=""></option>
+                </select>
+            </div>
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

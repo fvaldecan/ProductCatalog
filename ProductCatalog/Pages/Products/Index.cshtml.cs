@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ProductCatalog.Models;
 using RazorPagesProduct.Data;
-
+using System.Diagnostics;
 namespace ProductCatalog.Pages.Products
 {
     public class IndexModel : PageModel
@@ -20,33 +20,54 @@ namespace ProductCatalog.Pages.Products
             _context = context;
         }
 
-        public IList<Product> Product { get;set; }
-
+        public IList<Product> Product { get; set; }
+        public IList<ProductView> ProductView { get; set; }
 
         [BindProperty(SupportsGet = true)]
-        public string SearchString { get; set; }
+        public string FilterString { get; set; }
+
         public SelectList Categories { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public string ProductCategory { get; set; }
+
         public async Task OnGetAsync()
         {
-            IQueryable<string> categoryQuery = from p in _context.Product
-                                               orderby p.Category
-                                               select p.Category;
+            IQueryable<string> categoryQuery = from c in _context.Category
+                                               orderby c.Name
+                                               select c.Name;
 
-            var products = from p in _context.Product
-                           select p;
-            if (!string.IsNullOrEmpty(SearchString))
-            {
-                products = products.Where(s => s.Name.Contains(SearchString));
-            }
+            //from p in _context.Product
+            //orderby p.CategoryId
+            //select p.CategoryId;
+            var products = from m in _context.Product
+                         select m;
+            var productViews = (from p in _context.Product
+                                join c in _context.Category on p.CategoryId equals c.ID
+                                select new ProductView
+                                {
+                                    ID = p.ID,
+                                    Name = p.Name,
+                                    Category = c.Name,
+                                    Price = p.Price
+                                });
+            //Debug.Write(products);
+            Debug.Write(productViews);
             if (!string.IsNullOrEmpty(ProductCategory))
             {
-                products = products.Where(s => s.Category == ProductCategory);
+                Debug.WriteLine(ProductCategory);
+                if (ProductCategory != "All" || ProductCategory != "")
+                {
+
+                    productViews = productViews.Where(p => p.Category == ProductCategory);
+                }
             }
+            //if (!string.IsNullOrEmpty(ProductCategory))
+            //{
+            //    products = products.Where(s => s.CategoryId == ProductCategory);
+            //}
             Categories = new SelectList(await categoryQuery.Distinct().ToListAsync());
-            Product = await products.ToListAsync();
+            ProductView = await productViews.ToListAsync();
         }
     }
 }
